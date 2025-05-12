@@ -71,15 +71,178 @@ Here’s a more detailed breakdown of the technologies and tools I specialize in
 
 ### 1. **Telemedicine Platform (HIPAA-Compliant)**
 Built using **Laravel**, **Vue.js**, and **Livewire**, this platform enables secure video consultations, encrypted document sharing, and comprehensive healthcare data protection. The system was designed to comply with **HIPAA** standards for privacy and security.
+     
+Folder Structure
+telemedicine-platform/
+├── backend/
+│   ├── app/
+│   │   ├── Http/
+│   │   │   └── Controllers/
+│   │   │       └── VideoCallController.php
+│   ├── routes/
+│   │   └── api.php
+│   └── database/
+│       └── migrations/
+├── frontend/
+│   ├── components/
+│   │   └── VideoCall.vue
+│   └── views/
+│       └── Dashboard.vue
+├── .env
+├── docker-compose.yml
+├── README.md
+📝 Example Code
+VideoCallController.php (Laravel)
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Appointment;
+
+class VideoCallController extends Controller
+{
+    public function generateToken(Request $request)
+    {
+        $token = bin2hex(random_bytes(32));
+        return response()->json(['token' => $token]);
+    }
+}
+VideoCall.vue (Vue.js)
+
+<template>
+  <div>
+    <h3>Video Call</h3>
+    <video id="localVideo" autoplay playsinline></video>
+    <video id="remoteVideo" autoplay playsinline></video>
+  </div>
+</template>
+
+<script>
+export default {
+  mounted() {
+    // WebRTC code to initialize video stream
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        document.getElementById('localVideo').srcObject = stream;
+      });
+  }
+}
+</script>
 
 ### 2. **Real-Time GPS Tracking Dashboard**
 Developed using **Laravel**, **Redis**, **WebSockets**, and **Google Maps API**, this real-time dashboard allows logistics companies to track vehicle locations, calculate estimated arrival times (ETA), and set up geofencing alerts for route management.
 
+Folder Structure
+gps-tracking-dashboard/
+├── backend/
+│   ├── app/
+│   │   └── Http/Controllers/TrackingController.php
+│   └── routes/api.php
+├── frontend/
+│   ├── components/MapTracker.vue
+├── .env
+├── README.md
+📝 Example Code
+TrackingController.php (Laravel)
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class TrackingController extends Controller
+{
+    public function getVehicleLocation($id)
+    {
+        $location = [
+            'lat' => 40.7128,
+            'lng' => -74.0060,
+            'status' => 'On Route'
+        ];
+        return response()->json($location);
+    }
+}
+MapTracker.vue (Vue.js with Google Maps)
+
+<template>
+  <GmapMap :center="center" :zoom="12" style="height:500px;">
+    <GmapMarker :position="center" />
+  </GmapMap>
+</template>
+
+<script>
+import { GmapMap, GmapMarker } from 'vue2-google-maps';
+
+export default {
+  components: { GmapMap, GmapMarker },
+  data() {
+    return { center: { lat: 40.7128, lng: -74.0060 } };
+  },
+  mounted() {
+    setInterval(this.fetchLocation, 5000);
+  },
+  methods: {
+    fetchLocation() {
+      fetch('/api/vehicle/1/location')
+        .then(res => res.json())
+        .then(data => { this.center = { lat: data.lat, lng: data.lng }; });
+    }
+  }
+}
+</script>
+
 ### 3. **Multi-Vendor E-Commerce System**
 Built with **Laravel Nova** and **Vue 3**, this e-commerce system supports multilingual capabilities, role-based admin controls, and real-time analytics, enabling clients to manage vendors, inventory, and transactions more effectively.
 
-### 4. **Custom CRM System**
-Created a **role-based CRM** system with automated reporting and dynamic workflows, increasing internal productivity for organizations and reducing manual operations. The system was integrated with a secure RESTful API for external data exchange.
+Folder Structure
+ecommerce-platform/
+├── backend/
+│   ├── app/Http/Controllers/ProductController.php
+│   ├── app/Models/Product.php
+│   └── routes/api.php
+├── frontend/
+│   └── components/ProductList.vue
+├── database/migrations/
+├── README.md
+📝 Example Code
+ProductController.php (Laravel)
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    public function index()
+    {
+        return Product::all();
+    }
+}
+ProductList.vue (Vue.js)
+
+<template>
+  <div>
+    <h3>Products</h3>
+    <ul>
+      <li v-for="product in products" :key="product.id">
+        {{ product.name }} - ${{ product.price }}
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return { products: [] };
+  },
+  mounted() {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => { this.products = data; });
+  }
+}
+</script>
 
 ## 🏆 Certifications
 
